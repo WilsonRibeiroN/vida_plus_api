@@ -54,10 +54,10 @@ CREATE DATABASE vida_plus;
 2. Configure o arquivo `.env`:
 
 ```
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=sua_senha
-DB_NAME=vida_plus
+MYSQL_USER=sghss
+MYSQL_PASSWORD=123456
+MYSQL_DB=vida_plus
+MYSQL_HOST=localhost
 ```
 
 ### ▶️ Rode a aplicação
@@ -97,5 +97,5 @@ Este projeto foi desenvolvido para fins acadêmicos no curso de Análise e Desen
 ## 👤 Autor
 
 - **Wilson Ribeiro Nunes**
-- RU: [Seu RU Aqui]
+- RU: 4477518
 - GitHub: [@WilsonRibeiroN](https://github.com/WilsonRibeiroN)
