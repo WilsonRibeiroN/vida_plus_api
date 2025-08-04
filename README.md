@@ -1,0 +1,101 @@
+# 🏥 SGHSS - VidaPlus API
+
+Sistema de Gestão Hospitalar e de Serviços de Saúde (SGHSS), desenvolvido como parte do Projeto Multidisciplinar - 2025A1 da UNINTER.
+
+---
+
+## 🚀 Tecnologias Utilizadas
+
+- 🐍 Python 3.11+
+- ⚡ [FastAPI](https://fastapi.tiangolo.com/)
+- 🐘 MySQL 8
+- 🛠️ SQLAlchemy
+- 🔐 Pydantic
+- 🔄 Uvicorn
+
+---
+
+## 📦 Instalação
+
+### ✅ Pré-requisitos
+
+- Python 3 instalado
+- MySQL instalado
+- Git instalado
+
+### 📥 Clone o repositório
+
+```bash
+git clone https://github.com/WilsonRibeiroN/vida_plus_api.git
+cd vida_plus_api
+```
+
+### 🐍 Crie e ative o ambiente virtual
+
+```bash
+python -m venv venv
+venv\Scripts\activate  # Windows
+```
+
+### 📦 Instale as dependências
+
+```bash
+pip install -r requirements.txt
+```
+
+### ⚙️ Configure o banco de dados
+
+1. Crie o banco no MySQL:
+
+```sql
+CREATE DATABASE vida_plus;
+```
+
+2. Configure o arquivo `.env`:
+
+```
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=sua_senha
+DB_NAME=vida_plus
+```
+
+### ▶️ Rode a aplicação
+
+```bash
+uvicorn app.main:app --reload
+```
+
+---
+
+## 🔌 Endpoints disponíveis
+
+- `POST /pacientes/` - Criar paciente
+- `POST /profissionais/` - Criar profissional
+- `POST /consultas/` - Agendar consulta
+- `GET /pacientes/` - Listar pacientes
+- `GET /profissionais/` - Listar profissionais
+- `GET /consultas/` - Listar consultas
+
+---
+
+## 🧪 Testes
+
+Acesse a documentação interativa:
+
+- Swagger: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+- Redoc: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
+
+---
+
+## 📄 Licença
+
+Este projeto foi desenvolvido para fins acadêmicos no curso de Análise e Desenvolvimento de Sistemas da UNINTER.
+
+---
+
+## 👤 Autor
+
+- **Wilson Ribeiro Nunes**
+- RU: [Seu RU Aqui]
+- GitHub: [@WilsonRibeiroN](https://github.com/WilsonRibeiroN)
