@@ -96,6 +96,6 @@ Este projeto foi desenvolvido para fins acadêmicos no curso de Análise e Desen
 
 ## 👤 Autor
 
-- **Wilson Ribeiro Nunes**
+- **Wilson Ribeiro Nazario**
 - RU: 4477518
 - GitHub: [@WilsonRibeiroN](https://github.com/WilsonRibeiroN)
