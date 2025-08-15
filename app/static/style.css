@@ -1,0 +1,9 @@
+body { font-family: Arial, sans-serif; background:#f4f6f8; padding:20px; }
+.login-card { width:320px; margin:80px auto; background:white; padding:20px; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.1); text-align:center; }
+.login-card h1{ margin:0 0 20px 0; font-size:26px; color:#2c3e50;}
+.login-card input{ display:block; width:90%; margin:10px auto; padding:8px; border:1px solid #ccd; border-radius:4px;}
+.login-card button{ padding:10px 20px; border:none; background:#2c7; color:#fff; border-radius:6px; cursor:pointer;}
+.tabs { text-align:center; margin-bottom:10px;}
+.tabbtn { margin:0 6px; padding:8px 12px; }
+.content { background:white; padding:12px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
+.subtabs button{ margin:6px; padding:6px 10px;}

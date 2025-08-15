@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Administrativo - SGHSS</title>
+  <link rel="stylesheet" href="/static/style.css"/>
+</head>
+<body>
+  <div class="login-card" id="loginCard">
+    <h1>ADMINISTRATIVO</h1>
+    <label>Email</label>
+    <input type="text" id="email" placeholder="email"/>
+    <label>Senha</label>
+    <input type="password" id="senha" placeholder="senha"/>
+    <button id="entrar">Entrar</button>
+  </div>
+
+  <div id="app" style="display:none;">
+    <div class="tabs">
+      <button class="tabbtn" data-tab="post">POST</button>
+      <button class="tabbtn" data-tab="get">GET</button>
+      <button class="tabbtn" data-tab="delete">DELETE</button>
+    </div>
+
+    <div class="content" id="post" style="display:none;">
+      <h2>POST</h2>
+      <div class="subtabs">
+        <button data-sub="paciente">Paciente</button>
+        <button data-sub="profissional">Profissional</button>
+        <button data-sub="consulta">Consultas</button>
+      </div>
+      <div id="postContent"></div>
+    </div>
+
+    <div class="content" id="get" style="display:none;">
+      <h2>GET</h2>
+      <div class="subtabs">
+        <button data-subg="paciente">Paciente</button>
+        <button data-subg="profissional">Profissional</button>
+        <button data-subg="consulta">Consultas</button>
+      </div>
+      <div id="getContent"></div>
+    </div>
+
+    <div class="content" id="delete" style="display:none;">
+      <h2>DELETE</h2>
+      <div class="subtabs">
+        <button data-subd="paciente">Paciente</button>
+        <button data-subd="profissional">Profissional</button>
+        <button data-subd="consulta">Consultas</button>
+      </div>
+      <div id="deleteContent"></div>
+    </div>
+  </div>
+
+<script>
+const API = "/api";
+function showListOrEmpty(items, formatFunc){ if(!items || items.length===0) return "<div><em>Tabela vazia</em></div>"; return "<ul>" + items.map(formatFunc).join("") + "</ul>"; }
+let id_paciente = 1, id_profissional = 1, id_consulta = 1;
+async function initIds(){ const [pacientes, profs, consultas] = await Promise.all([ fetch(API + "/pacientes").then(r=>r.json()).catch(()=>[]), fetch(API + "/profissionais").then(r=>r.json()).catch(()=>[]), fetch(API + "/consultas").then(r=>r.json()).catch(()=>[]) ]); id_paciente = pacientes.length ? Math.max(...pacientes.map(p=>p.id))+1 : 1; id_profissional = profs.length ? Math.max(...profs.map(p=>p.id))+1 : 1; id_consulta = consultas.length ? Math.max(...consultas.map(c=>c.id))+1 : 1; }
+document.getElementById("email").addEventListener("focus", ()=> { document.getElementById("email").value = "administrativo2000@med.com.br"; });
+document.getElementById("senha").addEventListener("focus", ()=> { document.getElementById("senha").value = "****"; });
+document.getElementById("entrar").addEventListener("click", async ()=>{ document.getElementById("email").value = "administrativo2000@med.com.br"; document.getElementById("senha").value = "****"; document.getElementById("loginCard").style.display = "none"; document.getElementById("app").style.display = "block"; await initIds(); showTab('post'); });
+document.querySelectorAll(".tabbtn").forEach(b=>{ b.addEventListener("click", ()=> showTab(b.dataset.tab)); });
+function showTab(tab){ document.querySelectorAll(".content").forEach(c=> c.style.display='none'); document.getElementById(tab).style.display = 'block'; }
+// POST subtabs
+document.querySelectorAll(".subtabs button").forEach(btn=>{ btn.addEventListener("click", ()=> showPostSub(btn.dataset.sub)); });
+function showPostSub(sub){ const container = document.getElementById("postContent"); container.innerHTML = ""; if(sub==="paciente"){ container.innerHTML = `<h3>Novo Paciente</h3><input id="p_nome" placeholder="Nome"/><input id="p_cpf" placeholder="CPF"/><button id="p_send">Enviar</button><div id="p_result"></div>`; document.getElementById("p_send").onclick = async ()=>{ const nome = document.getElementById("p_nome").value; const cpf = document.getElementById("p_cpf").value; const payload = { id: id_paciente, nome, cpf }; const res = await fetch(API + "/pacientes", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(payload)}); const data = await res.json(); document.getElementById("p_result").innerText = JSON.stringify(data); id_paciente++; }; } else if(sub==="profissional"){ container.innerHTML = `<h3>Novo Profissional</h3><input id="pr_nome" placeholder="Nome"/><input id="pr_esp" placeholder="Especialidade"/><button id="pr_send">Enviar</button><div id="pr_result"></div>`; document.getElementById("pr_send").onclick = async ()=>{ const nome = document.getElementById("pr_nome").value; const esp = document.getElementById("pr_esp").value; const payload = { id: id_profissional, nome, especialidade: esp }; const res = await fetch(API + "/profissionais", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(payload)}); const data = await res.json(); document.getElementById("pr_result").innerText = JSON.stringify(data); id_profissional++; }; } else if(sub==="consulta"){ (async ()=>{ const pacientes = await fetch(API + "/pacientes").then(r=>r.json()); const profs = await fetch(API + "/profissionais").then(r=>r.json()); let html = `<h3>Nova Consulta</h3><div><strong>Pacientes</strong>${ (pacientes && pacientes.length) ? "<ul>" + pacientes.map(p=>`<li>${p.id} - ${p.nome}</li>`).join("") + "</ul>" : "<div><em>Tabela vazia</em></div>" }</div><div><strong>Profissionais</strong>${ (profs && profs.length) ? "<ul>" + profs.map(p=>`<li>${p.id} - ${p.nome} - ${p.especialidade}</li>`).join("") + "</ul>" : "<div><em>Tabela vazia</em></div>" }</div><input id="c_paciente" placeholder="ID Paciente"/><input id="c_profissional" placeholder="ID Profissional"/><button id="c_send">Enviar</button><div id="c_result"></div>`; container.innerHTML = html; document.getElementById("c_send").onclick = async ()=>{ const paciente_id = parseInt(document.getElementById("c_paciente").value); const profissional_id = parseInt(document.getElementById("c_profissional").value); const today = new Date(); const dateStr = today.getFullYear() + "-" + String(today.getMonth()+1).padStart(2,'0') + "-" + String(today.getDate()).padStart(2,'0') + " 10:00:00"; const payload = { id: id_consulta, paciente_id, profissional_id, data: dateStr }; const res = await fetch(API + "/consultas", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(payload)}); const data = await res.json(); document.getElementById("c_result").innerText = JSON.stringify(data); id_consulta++; }; })(); } }
+// GET subtabs
+document.querySelectorAll("[data-subg]").forEach(btn=>{ btn.addEventListener("click", async ()=> { const c = btn.dataset.subg; const container = document.getElementById("getContent"); container.innerHTML = ""; if(c==="paciente"){ const pacientes = await fetch(API + "/pacientes").then(r=>r.json()); container.innerHTML = "<h3>Pacientes</h3>" + showListOrEmpty(pacientes, p=>`<li>${p.id} - ${p.nome} - ${p.cpf}</li>`); } else if(c==="profissional"){ const profs = await fetch(API + "/profissionais").then(r=>r.json()); container.innerHTML = "<h3>Profissionais</h3>" + showListOrEmpty(profs, p=>`<li>${p.id} - ${p.nome} - ${p.especialidade}</li>`); } else { const consultas = await fetch(API + "/consultas").then(r=>r.json()); const pacientes = await fetch(API + "/pacientes").then(r=>r.json()); const profs = await fetch(API + "/profissionais").then(r=>r.json()); container.innerHTML = "<h3>Consultas</h3>" + ( (consultas && consultas.length) ? "<ul>" + consultas.map(c=> { const pac = pacientes.find(p=>p.id===c.paciente_id) || {}; const prof = profs.find(p=>p.id===c.profissional_id) || {}; return `<li>${c.id} - Paciente: ${c.paciente_id} ${pac.nome || ''} - Profissional: ${c.profissional_id} ${prof.nome || ''} (${prof.especialidade || ''}) - ${c.data}</li>`; }).join("") + "</ul>" : "<div><em>Tabela vazia</em></div>" ); } }); });
+// DELETE subtabs
+document.querySelectorAll("[data-subd]").forEach(btn=>{ btn.addEventListener("click", async ()=> { const c = btn.dataset.subd; const container = document.getElementById("deleteContent"); container.innerHTML = ""; if(c==="paciente"){ const pacientes = await fetch(API + "/pacientes").then(r=>r.json()); container.innerHTML = "<h3>Pacientes</h3>" + showListOrEmpty(pacientes, p=>`<li>${p.id} - ${p.nome}</li>`) + '<input id="del_paciente" placeholder="ID para apagar"/><button id="del_paciente_btn">Apagar</button><div id="del_p_result"></div>'; document.getElementById("del_paciente_btn").onclick = async ()=>{ const id = parseInt(document.getElementById("del_paciente").value); const res = await fetch(API + "/pacientes/" + id, {method: "DELETE"}); const data = await res.json(); document.getElementById("del_p_result").innerText = JSON.stringify(data); await initIds(); }; } else if(c==="profissional"){ const profs = await fetch(API + "/profissionais").then(r=>r.json()); container.innerHTML = "<h3>Profissionais</h3>" + showListOrEmpty(profs, p=>`<li>${p.id} - ${p.nome} - ${p.especialidade}</li>`) + '<input id="del_prof" placeholder="ID para apagar"/><button id="del_prof_btn">Apagar</button><div id="del_pr_result"></div>'; document.getElementById("del_prof_btn").onclick = async ()=>{ const id = parseInt(document.getElementById("del_prof").value); const res = await fetch(API + "/profissionais/" + id, {method: "DELETE"}); const data = await res.json(); document.getElementById("del_pr_result").innerText = JSON.stringify(data); await initIds(); }; } else { const consultas = await fetch(API + "/consultas").then(r=>r.json()); const pacientes = await fetch(API + "/pacientes").then(r=>r.json()); const profs = await fetch(API + "/profissionais").then(r=>r.json()); container.innerHTML = "<h3>Consultas</h3>" + ( (consultas && consultas.length) ? "<ul>" + consultas.map(c=> { const pac = pacientes.find(p=>p.id===c.paciente_id)||{}; const prof = profs.find(p=>p.id===c.profissional_id)||{}; return `<li>${c.id} - Paciente: ${c.paciente_id} ${pac.nome||''} - Profissional: ${c.profissional_id} ${prof.nome||''} (${prof.especialidade||''}) - ${c.data}</li>`; }).join("") + "</ul>" : "<div><em>Tabela vazia</em></div>" ) + '<input id="del_cons" placeholder="ID para apagar"/><button id="del_cons_btn">Apagar</button><div id="del_cons_result"></div>'; document.getElementById("del_cons_btn").onclick = async ()=>{ const id = parseInt(document.getElementById("del_cons").value); const res = await fetch(API + "/consultas/" + id, {method: "DELETE"}); const data = await res.json(); document.getElementById("del_cons_result").innerText = JSON.stringify(data); await initIds(); }; } }); });
+</script>
+</body>
+</html>
